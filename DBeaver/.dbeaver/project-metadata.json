@@ -1,0 +1,9 @@
+{
+  "resources": {
+    "Scripts/Script.sql": {
+      "sql-editor-data-source-id": "mysql8-18138274d53-54f8e5745a663171",
+      "default-datasource": "mysql8-18138274d53-54f8e5745a663171",
+      "default-catalog": "hotelSystem"
+    }
+  }
+}
