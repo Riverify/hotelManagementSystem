@@ -4,20 +4,30 @@ import com.river.dao.CustomerDao;
 import com.river.entity.Customer;
 import com.river.util.DBUtil;
 
+import java.util.List;
+
 public class CustomerDaoImpl implements CustomerDao {
     @Override
     public int register(Customer customer) {
-        String sql = "insert into customer values(null, ?, ?, ?, ?, ?)";
+        // vip非空，默认为false
+        String sql = "insert into customer values(null, ?, ?, ?, false, ?, ?)";
         Object[] params = {customer.getName(), customer.getIdnum(),
-                customer.getPhone(), customer.getVip(), customer.getMoney()};
+                customer.getPhone(), customer.getMoney(), customer.getPassword()};
         return DBUtil.executeUpdate(sql, params);
     }
 
     @Override
-    public int checkLogin(Customer customer) {
+    public List<Customer> checkLogin(Customer customer) {
         String sql = "select * from customer where phone = ? and password = ?";
         Object[] params = {customer.getPhone(), customer.getPassword()};
-        return DBUtil.executeUpdate(sql, params);
+        return DBUtil.executeQuery(sql, params, Customer.class);
+    }
+
+    @Override
+    public List<Customer> checkRegister(Customer customer) {
+        String sql = "select * from customer where phone = ?";
+        Object[] params = {customer.getPhone()};
+        return DBUtil.executeQuery(sql, params, Customer.class);
     }
 
 

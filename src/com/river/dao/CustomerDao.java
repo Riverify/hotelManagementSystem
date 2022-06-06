@@ -2,6 +2,8 @@ package com.river.dao;
 
 import com.river.entity.Customer;
 
+import java.util.List;
+
 public interface CustomerDao {
     /**
      * 注册信息
@@ -17,5 +19,13 @@ public interface CustomerDao {
      * @param customer 用户类
      * @return 影响行数
      */
-    int checkLogin(Customer customer);
+    List<Customer> checkLogin(Customer customer);
+
+    /**
+     * 注册检查
+     *
+     * @param customer 用户类
+     * @return 影响行数
+     */
+    List<Customer> checkRegister(Customer customer);
 }

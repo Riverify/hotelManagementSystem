@@ -39,6 +39,10 @@ public class Customer {
         this.id = id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
@@ -75,6 +79,10 @@ public class Customer {
         this.vip = vip;
     }
 
+    public void setVip(Boolean vip) {
+        this.vip = vip;
+    }
+
 
     public int getMoney() {
         return money;
@@ -83,6 +91,11 @@ public class Customer {
     public void setMoney(int money) {
         this.money = money;
     }
+
+    public void setMoney(Integer money) {
+        this.money = money;
+    }
+
 
     @Override
     public String toString() {

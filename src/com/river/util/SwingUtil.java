@@ -129,4 +129,8 @@ public abstract class SwingUtil {
         return jTextField;
     }
 
+    public static void showMessage(Component parentComponent, String message) {
+        JOptionPane.showMessageDialog(parentComponent, message);
+    }
+
 }

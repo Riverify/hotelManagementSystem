@@ -17,7 +17,7 @@ create table customer
     name     varchar(4) not null,
     idnum    varchar(18),
     phone    varchar(11),
-    vip      boolean default false,
+    vip      boolean    not null default false,
     money    int(9) default 0,
     password varchar(20),
     constraint uk_customer_idnum unique (idnum),
@@ -104,6 +104,11 @@ select *
 from customer
 where phone = "19355359399"
   and password = "114514"
+
+select *
+from customer
+where phone =
+  and password = ?
 
 
 
