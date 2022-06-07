@@ -5,7 +5,7 @@ import java.sql.Date;
 public class RoomOperation {
     private int business;
     private String idnum;
-    private int roomnum;
+    private int roomno;
     private Date enterdate;
     private Date outdate;
     private String status;
@@ -13,10 +13,10 @@ public class RoomOperation {
     public RoomOperation() {
     }
 
-    public RoomOperation(int business, String idnum, int roomnum, Date enterdate, Date outdate, String status) {
+    public RoomOperation(int business, String idnum, int roomno, Date enterdate, Date outdate, String status) {
         this.business = business;
         this.idnum = idnum;
-        this.roomnum = roomnum;
+        this.roomno = roomno;
         this.enterdate = enterdate;
         this.outdate = outdate;
         this.status = status;
@@ -38,12 +38,12 @@ public class RoomOperation {
         this.idnum = idnum;
     }
 
-    public int getRoomnum() {
-        return roomnum;
+    public int getRoomno() {
+        return roomno;
     }
 
-    public void setRoomnum(Integer roomnum) {
-        this.roomnum = roomnum;
+    public void setRoomno(Integer roomnum) {
+        this.roomno = roomnum;
     }
 
     public Date getEnterdate() {
@@ -75,7 +75,7 @@ public class RoomOperation {
         return "roomOperation{" +
                 "business=" + business +
                 ", idnum='" + idnum + '\'' +
-                ", roomnum=" + roomnum +
+                ", roomnum=" + roomno +
                 ", enterdate=" + enterdate +
                 ", outdate=" + outdate +
                 ", status='" + status + '\'' +

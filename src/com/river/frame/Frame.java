@@ -112,7 +112,7 @@ public class Frame {
             if (list.size() == 1) {
                 // TODO: 6/6/22 主界面
                 if (list.get(0).getId() == 1) {
-                    // TODO: 6/7/22 管理界面
+                    // TODO: 6/7/22 管理界面 对于负数居住，进行惩罚
                     adminFrame();
                 }
                 mainFrame();
@@ -165,7 +165,7 @@ public class Frame {
 
         for (DetailAll detailAll : list) {
             textArea_Info.append(detailAll.toString());
-            textArea_Info.append("——————————————————————————————————————————————————————————————");
+            textArea_Info.append("——————————————————————————————————————————————————————————————\n");
         }
 
         jPanel_topScreen.add(scrollPane);
@@ -196,32 +196,38 @@ public class Frame {
 
         // 显示订单下拉框
         // 创建订单流水对象，专门储存订单号
-        RoomOperation roomBusiness = new RoomOperation();
-
-        RoomOperationDao roomOperationDao = new RoomOperationImpl();
-        List<RoomOperation> list_business = roomOperationDao.selcetBusiness(roomBusiness);
+        DetailAllDao detailAllDao = new DetailAllDaoImpl();
+        List<DetailAll> list_business = detailAllDao.findAllStillIn();
 
         JComboBox<Integer> box_business = new JComboBox<>();
         box_business.setFont(new Font("Arial", Font.PLAIN, 30));
         box_business.setBorder(new EmptyBorder(4, 10, 4, 10)); // 设置边距
 
         // 将查询得到的list_business中的每一个对象的business获取并给予下拉框
-        for (RoomOperation listBusiness : list_business) {
+        for (DetailAll listBusiness : list_business) {
             box_business.addItem(listBusiness.getBusiness());
         }
 
         // 展示当前订单的房间号
         JTextField textField_nowRoom = SwingUtil.createNormalTextField("", 30, 3);
-        textField_nowRoom.addFocusListener(new JTextFieldHintListener(textField_nowRoom, "未选择")); // 提示字符
+        //textField_nowRoom.addFocusListener(new JTextFieldHintListener(textField_nowRoom, "无可选")); // 提示字符
+
+        // 将当前单号对应房间号给予文本框
+        RoomOperation nowRoom1 = new RoomOperation();
+        if (box_business.getSelectedItem() != null) {
+            nowRoom1.setBusiness((Integer) box_business.getSelectedItem());
+            RoomOperationDao roomOperationDao1 = new RoomOperationImpl();
+            textField_nowRoom.setText(String.valueOf(roomOperationDao1.selcetRoomnoByBusiness(nowRoom1).get(0).getRoomno()));
+        }
+
+
         textField_nowRoom.setEditable(false);   // 禁止用户编辑
 
 
         // 显示可用房间下拉框
         // 创建房间信息对象，专门可用房间号
-        RoomInfo roomInfo = new RoomInfo();
-
         RoomInfoDao roomInfoDao = new RoomInfoDaoImpl();
-        List<RoomInfo> empytRoomList = roomInfoDao.selectEmptyRoom(roomInfo);
+        List<RoomInfo> empytRoomList = roomInfoDao.selectEmptyRoom();
 
 
         // 设置box的基本信息
@@ -240,7 +246,7 @@ public class Frame {
 
         // 删除按钮
         JButton button_delete = SwingUtil.createNormalButton("退房", 30, 15);
-        // TODO: 6/7/22 退房需要同时改变订单流水中的outdate
+
 
 
         jPanel_roomChange.add(label_business);
@@ -277,10 +283,10 @@ public class Frame {
             for (DetailAll detailAll : l) {
                 count++;
                 textArea_Info.append(detailAll.toString());
-                textArea_Info.append("——————————————————————————————————————————————————————————————");
+                textArea_Info.append("——————————————————————————————————————————————————————————————\n");
             }
 
-            textArea_Info.append("\n刷新完毕:共" + count + "条记录！\n");
+            textArea_Info.append("\n刷新完毕:总共" + count + "条记录！\n");
         });
 
         // 刷新部分　——　最近10行
@@ -294,13 +300,95 @@ public class Frame {
             for (int i = l.size() - 1; i >= 0; i--) {
                 count++;
                 textArea_Info.append(l.get(i).toString());
-                textArea_Info.append("——————————————————————————————————————————————————————————————");
+                textArea_Info.append("——————————————————————————————————————————————————————————————\n");
                 // 最多输出前10条
                 if (count == 10) {
                     break;
                 }
             }
-            textArea_Info.append("\n刷新完毕:共" + count + "条记录！\n");
+            textArea_Info.append("\n刷新完毕:当前显示" + count + "条记录！\n");
+        });
+
+        // 仍在持续的单号
+        button_current.addActionListener(e -> {
+            DetailAllDao d = new DetailAllDaoImpl();
+            List<DetailAll> l = d.findAllStillIn();
+
+            textArea_Info.setText("");  // 清空文本域
+
+            int count = 0; // 计数器
+            for (DetailAll detailAll : l) {
+                count++;
+                textArea_Info.append(detailAll.toString());
+                textArea_Info.append("——————————————————————————————————————————————————————————————\n");
+            }
+            textArea_Info.append("\n刷新完毕:共" + count + "条'预约'和'在住'的记录！\n");
+        });
+
+        // box_business下拉框调动textField_nowRoom房间号的改变
+        box_business.addActionListener(e -> {
+            RoomOperation nowRoom = new RoomOperation();
+            if (box_business.getSelectedItem() != null) {
+                nowRoom.setBusiness((Integer) box_business.getSelectedItem());
+                RoomOperationDao roomOperationDao1 = new RoomOperationImpl();
+                textField_nowRoom.setText(String.valueOf(roomOperationDao1.selcetRoomnoByBusiness(nowRoom).get(0).getRoomno()));
+            }
+        });
+
+        // 换房按钮
+        button_changeRoom.addActionListener(e -> {
+            // 保证能获取到之前、之后的房间号
+            if (textField_nowRoom.getText().equals("") || box_room.getSelectedItem() == null || box_business.getSelectedItem() == null) {
+                SwingUtil.showMessage(jFrame, "无选中");
+            } else {
+                int beforeRoomNo = Integer.parseInt(textField_nowRoom.getText());
+                int changeRoomNo = (int) box_room.getSelectedItem();
+                int business = (int) box_business.getSelectedItem();
+
+                if (beforeRoomNo == changeRoomNo) {
+                    SwingUtil.showMessage(jFrame, "Error! Check the console");
+                    System.err.println("存在roomInfo表和roomOperation不一致的问题，请手动前往数据库修改");
+                } else {
+                    RoomOperationDao r = new RoomOperationImpl();
+                    int n = r.changeRoom(beforeRoomNo, changeRoomNo, business);
+                    if (n != 0) {
+                        RoomInfoDao r2 = new RoomInfoDaoImpl();
+                        int n1 = r2.makeRoomEmpty(beforeRoomNo);
+                        int n2 = r2.makeRoomOccupy(changeRoomNo);
+                        // 校验
+                        if (n1 == 1 && n2 == 1) {
+                            SwingUtil.showMessage(jFrame, "更换成功！");
+                            jFrame.dispose();
+                        } else {
+                            SwingUtil.showMessage(jFrame, "更新失败");
+                        }
+                    }
+                }
+            }
+        });
+
+        // 退房按钮
+        button_delete.addActionListener(e -> {
+            if (textField_nowRoom.getText().equals("")) {
+                SwingUtil.showMessage(jFrame, "无选中");
+            } else {
+                // 获取数据
+                int no = Integer.parseInt(textField_nowRoom.getText());
+
+                RoomInfoDao r1 = new RoomInfoDaoImpl();
+                int n1 = r1.makeRoomEmpty(no);
+                RoomOperationDao r2 = new RoomOperationImpl();
+                int n2 = r2.outRoom(no);
+
+                // 校验
+                if (n1 == 1 && n2 == 1) {
+                    SwingUtil.showMessage(jFrame, "退房成功!");
+                    jFrame.dispose();
+                } else {
+                    SwingUtil.showMessage(jFrame, "出现问题");
+                    System.out.println(n1 + " " + n2);
+                }
+            }
         });
 
     }

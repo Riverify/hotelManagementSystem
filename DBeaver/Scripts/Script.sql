@@ -48,13 +48,13 @@ select ro.business,
        c.idnum,
        ro.roomno,
        ro.enterdate,
-       ro.outdate - ro.enterdate as orderday,
+       ro.outdate - ro.enterdate + 1 as orderday,
        case
-           when enterdate > CURRENT_DATE() then "预定"
-           when enterdate <= CURRENT_DATE() and outdate >= CURRENT_DATE() then "在住"
-           when outdate < CURRENT_DATE() then "无人"
+           when enterdate > CURRENT_DATE() and (ro.outdate - ro.enterdate + 1 > 0) then "预定"
+           when enterdate <= CURRENT_DATE() and outdate >= CURRENT_DATE() and ri.booked = true then "在住"
+           when outdate < CURRENT_DATE() and ri.booked = false then "结束"
            else "无人"
-           end                   as status
+           end                       as status
         ,
        ri.roomtype,
        ri.bednum,
@@ -67,8 +67,6 @@ from customer c
 where c.vip = true
 order by ro.business;
 
--- 测试数据
--- insert into roomOperation values(null, '342223200201266631', 101, '2022-06-04', '2022-06-05');
 
 
 insert into roomInfo
@@ -93,26 +91,44 @@ insert into roomInfo
 values (110, '总统房', 2, 1120, false);
 insert into roomInfo
 values (111, '廉价房', 2, 50, false);
+insert into roomInfo
+values (201, '廉价房', 2, 50, false);
+insert into roomInfo
+values (202, '廉价房', 2, 50, false);
+insert into roomInfo
+values (203, '廉价房', 2, 50, false);
+insert into roomInfo
+values (204, '廉价房', 2, 50, false);
+insert into roomInfo
+values (205, '廉价房', 2, 50, false);
+insert into roomInfo
+values (206, '廉价房', 2, 50, false);
+
 
 -- 管理员
 insert into customer
 values (1, 'ad', 'admin', 'admin', true, 1000000);
 
 
+-- 测试数据
+insert into roomOperation
+values (null, '342223200201266631', 102, '2022-06-07', '2022-06-10');
 -- ---------------------------------------------------------------------------
-
-select *
-from customer
-where phone = "19355359399"
-  and password = "114514"
-
-select *
-from customer
-where phone =
-  and password = ?
-
-
-
-
+-- test
+-- select *
+-- from customer
+-- where phone = "19355359399"
+--   and password = "114514"
+-- 
+-- select *
+-- from customer
+-- where phone =
+--   and password = ?
+-- 
+-- 
+-- select business from roomOperation where outdate > CURRENT_DATE();
+select roomno
+from roomOperation
+where outdate < CURRENT_DATE();
 
 

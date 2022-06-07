@@ -126,16 +126,17 @@ public class DetailAll {
 
     @Override
     public String toString() {
-        return "流水号：" + business + '\n' +
-                "  姓名：" + name +
-                "  电话：" + phone +
-                "  身份证号：" + idnum +
+        return "  流水号：" + business +
                 "  房间号：" + roomno +
                 "  入住时间：" + enterdate +
-                "  住房时间：" + orderday + "天\n" + '\t' +
+                "  姓名：" + name +
                 "  订单状态：" + status +
-                "  房屋类型：" + roomtype + "人间" +
-                "  床位数：" + bednum + "张" +
-                "  价格：" + price + "元\n";
+                "  价格：" + price + "元/天" +
+                "  住房时间：" + orderday + "天\n" + '\t' +
+                "  电话：" + phone +
+                "  身份证号：" + idnum +
+                "  房屋类型：" + roomtype +
+                "  床位数：" + bednum + "人间\n";
+
     }
 }

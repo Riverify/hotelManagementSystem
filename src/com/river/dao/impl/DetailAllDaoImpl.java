@@ -14,4 +14,11 @@ public class DetailAllDaoImpl implements DetailAllDao {
         Object[] params = {};
         return DBUtil.executeQuery(sql, params, DetailAll.class);
     }
+
+    @Override
+    public List<DetailAll> findAllStillIn() {
+        String sql = "select * from detailAll where status = '预定' or status = '在住'";
+        Object[] params = {};
+        return DBUtil.executeQuery(sql, params, DetailAll.class);
+    }
 }
