@@ -1,32 +1,32 @@
 package com.river.entity;
 
-import java.util.Date;
+import java.sql.Date;
 
-public class roomOperation {
+public class RoomOperation {
     private int business;
     private String idnum;
     private int roomnum;
-    private Date enterDate;
-    private Date outDate;
+    private Date enterdate;
+    private Date outdate;
     private String status;
 
-    public roomOperation() {
+    public RoomOperation() {
     }
 
-    public roomOperation(int business, String idnum, int roomnum, Date enterDate, Date outDate, String status) {
+    public RoomOperation(int business, String idnum, int roomnum, Date enterdate, Date outdate, String status) {
         this.business = business;
         this.idnum = idnum;
         this.roomnum = roomnum;
-        this.enterDate = enterDate;
-        this.outDate = outDate;
+        this.enterdate = enterdate;
+        this.outdate = outdate;
         this.status = status;
     }
 
-    public int getBussiness() {
+    public int getBusiness() {
         return business;
     }
 
-    public void setBussiness(int business) {
+    public void setBusiness(Integer business) {
         this.business = business;
     }
 
@@ -42,24 +42,24 @@ public class roomOperation {
         return roomnum;
     }
 
-    public void setRoomnum(int roomnum) {
+    public void setRoomnum(Integer roomnum) {
         this.roomnum = roomnum;
     }
 
-    public Date getEnterDate() {
-        return enterDate;
+    public Date getEnterdate() {
+        return enterdate;
     }
 
-    public void setEnterDate(Date enterDate) {
-        this.enterDate = enterDate;
+    public void setEnterdate(Date enterdate) {
+        this.enterdate = enterdate;
     }
 
-    public Date getOutDate() {
-        return outDate;
+    public Date getOutdate() {
+        return outdate;
     }
 
-    public void setOutDate(Date outDate) {
-        this.outDate = outDate;
+    public void setOutdate(Date outdate) {
+        this.outdate = outdate;
     }
 
     public String getStatus() {
@@ -76,8 +76,8 @@ public class roomOperation {
                 "business=" + business +
                 ", idnum='" + idnum + '\'' +
                 ", roomnum=" + roomnum +
-                ", enterDate=" + enterDate +
-                ", outDate=" + outDate +
+                ", enterdate=" + enterdate +
+                ", outdate=" + outdate +
                 ", status='" + status + '\'' +
                 '}';
     }

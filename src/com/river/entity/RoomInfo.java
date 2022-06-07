@@ -22,7 +22,7 @@ public class RoomInfo {
         return roomno;
     }
 
-    public void setRoomno(int roomno) {
+    public void setRoomno(Integer roomno) {
         this.roomno = roomno;
     }
 
@@ -38,7 +38,7 @@ public class RoomInfo {
         return bednum;
     }
 
-    public void setBednum(int bednum) {
+    public void setBednum(Integer bednum) {
         this.bednum = bednum;
     }
 
@@ -46,7 +46,7 @@ public class RoomInfo {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(Integer price) {
         this.price = price;
     }
 
@@ -54,7 +54,7 @@ public class RoomInfo {
         return booked;
     }
 
-    public void setBooked(boolean booked) {
+    public void setBooked(Boolean booked) {
         this.booked = booked;
     }
 
