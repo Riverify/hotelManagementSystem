@@ -129,6 +129,16 @@ public abstract class SwingUtil {
         return jTextField;
     }
 
+    public static JTextArea createNormalTextArea(int rows, int columns, int fontSize) {
+        JTextArea jTextArea = new JTextArea(rows, columns);
+        jTextArea.setLineWrap(true);    //设置文本域中的文本为自动换行
+        jTextArea.setForeground(Color.BLACK);    //设置组件的背景色
+        jTextArea.setFont(new Font("Arial", Font.PLAIN, fontSize));    //修改字体样式
+        // jTextArea.setBackground(Color.YELLOW);    //设置按钮背景色
+        return jTextArea;
+    }
+
+
     public static void showMessage(Component parentComponent, String message) {
         JOptionPane.showMessageDialog(parentComponent, message);
     }

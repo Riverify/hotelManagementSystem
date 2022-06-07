@@ -7,7 +7,7 @@ CREATE table roomInfo
     roomtype varchar(10),
     bednum   int(1),
     price    int(5),
-    booked   boolean default false
+    booked boolean not null default false
 );
 
 -- 用户表
@@ -47,6 +47,7 @@ select ro.business,
        c.phone,
        c.idnum,
        ro.roomno,
+       ro.enterdate,
        ro.outdate - ro.enterdate as orderday,
        case
            when enterdate > CURRENT_DATE() then "预定"

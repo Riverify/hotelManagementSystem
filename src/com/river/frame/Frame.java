@@ -1,8 +1,11 @@
 package com.river.frame;
 
 import com.river.dao.CustomerDao;
+import com.river.dao.DetailAllDao;
 import com.river.dao.impl.CustomerDaoImpl;
+import com.river.dao.impl.DetailAllDaoImpl;
 import com.river.entity.Customer;
+import com.river.entity.DetailAll;
 import com.river.util.SwingUtil;
 
 import javax.swing.*;
@@ -36,8 +39,8 @@ public class Frame {
         JLabel jLabel_psw = SwingUtil.createNormalLabel("密码   ：", 45);
 
 
-        JTextField jTextField = SwingUtil.createNormalTextField("", 45, 10);
-        JPasswordField jPasswordField = SwingUtil.createNormalPasswordField("", 45, 10);
+        JTextField jTextField = SwingUtil.createNormalTextField("", 40, 10);
+        JPasswordField jPasswordField = SwingUtil.createNormalPasswordField("", 40, 10);
 
         JButton button_login = SwingUtil.createNormalButton("登陆", 35, 30);
         JButton button_exit = SwingUtil.createNormalButton("退出", 35, 30);
@@ -127,14 +130,51 @@ public class Frame {
 
 
     /**
-     * 管理界面
+     * 管理房间界面
      */
     private static void adminFrame() {
         /*
         窗口绘制
          */
-        JFrame jFrame = SwingUtil.createNormalFrame("客房管理界面");
+        JFrame jFrame = SwingUtil.createNormalFrame("房间管理界面");
+        jFrame.setLayout(new GridLayout(2, 1, 10, 10));
 
+        JPanel jPanel_topScreen = new JPanel();
+        JPanel jPanel_bottomScreen = new JPanel();
+
+        // 显示顶部文本域
+        JTextArea textArea_Info = SwingUtil.createNormalTextArea(15, 65, 30);
+        textArea_Info.setEditable(false);   // 禁止用户编辑
+        JScrollPane scrollPane = new JScrollPane(textArea_Info);
+
+        // temp test
+        DetailAllDao dao = new DetailAllDaoImpl();
+        List<DetailAll> list = dao.findAll();
+
+        for (DetailAll detailAll : list) {
+            textArea_Info.append(detailAll.toString());
+            textArea_Info.append("——————————————————————————————————————————————————————————————");
+        }
+
+        jPanel_topScreen.add(scrollPane);
+
+
+        // 显示房间下拉框
+        JPanel jPanel_room = new JPanel(new FlowLayout());
+        JComboBox box_room = new JComboBox();
+        box_room.addItem("sad");
+
+
+        jPanel_room.add(box_room);
+        jPanel_bottomScreen.add(jPanel_room);
+
+
+        jFrame.add(jPanel_topScreen);
+        jFrame.add(jPanel_bottomScreen);
+
+
+        jFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        jFrame.setVisible(true);
 
     }
 
@@ -182,10 +222,10 @@ public class Frame {
         JLabel jLabel_psw = SwingUtil.createNormalLabel("密码     ：", 45);
 
 
-        JTextField jTextField_name = SwingUtil.createNormalTextField("", 45, 10);
-        JTextField jTextField_phone = SwingUtil.createNormalTextField("", 45, 10);
-        JTextField jTextField_idnum = SwingUtil.createNormalTextField("", 45, 10);
-        JPasswordField jPasswordField = SwingUtil.createNormalPasswordField("", 45, 10);
+        JTextField jTextField_name = SwingUtil.createNormalTextField("", 40, 10);
+        JTextField jTextField_phone = SwingUtil.createNormalTextField("", 40, 10);
+        JTextField jTextField_idnum = SwingUtil.createNormalTextField("", 40, 10);
+        JPasswordField jPasswordField = SwingUtil.createNormalPasswordField("", 40, 10);
 
         JButton button_register = SwingUtil.createNormalButton("注册", 55, 30);
         JButton button_exit = SwingUtil.createNormalButton("返回", 55, 30);
@@ -226,10 +266,12 @@ public class Frame {
         });
 
         button_register.addActionListener(e -> {
+
             String name = "";
             String phone = "";
             String idnum = "";
             String psw = "";
+
             try {
                 // 获得文本框和密码框内的文本并赋值
                 name = jTextField_name.getText();
@@ -289,7 +331,7 @@ public class Frame {
 
                 // 验证通过后，发送消息框
                 if (n == 1 && list.size() == 1) {
-                    SwingUtil.showMessage(jFrame, "注册成功!");
+                    SwingUtil.showMessage(jFrame, "注册信息提交成功，等待管理员审核!");
                     jFrame.dispose();
                 } else {
                     jTextField_idnum.setText("");
@@ -300,6 +342,5 @@ public class Frame {
                 }
             }
         });
-
     }
 }
