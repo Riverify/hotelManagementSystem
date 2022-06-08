@@ -30,5 +30,23 @@ public class CustomerDaoImpl implements CustomerDao {
         return DBUtil.executeQuery(sql, params, Customer.class);
     }
 
+    @Override
+    public List<Customer> findAll() {
+        return null;
+    }
+
+    @Override
+    public List<Customer> findOne(Customer customer) {
+        String sql = "select * from customer where phone = ?";
+        Object[] params = {customer.getPhone()};
+        return DBUtil.executeQuery(sql, params, Customer.class);
+    }
+
+    @Override
+    public List<Customer> findIdnumByPhone(Customer customer) {
+        String sql = "select idnum from customer where phone = ?";
+        Object[] params = {customer.getPhone()};
+        return DBUtil.executeQuery(sql, params, Customer.class);
+    }
 
 }

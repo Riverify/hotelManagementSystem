@@ -28,4 +28,24 @@ public interface CustomerDao {
      * @return 影响行数
      */
     List<Customer> checkRegister(Customer customer);
+
+    /**
+     * 查找所有客户
+     *
+     * @return
+     */
+    List<Customer> findAll();
+
+    /**
+     * 根据手机号查找特定用户
+     *
+     * @param customer
+     * @return
+     */
+    List<Customer> findOne(Customer customer);
+
+    /**
+     * 根据手机号获得身份证信息
+     */
+    List<Customer> findIdnumByPhone(Customer customer);
 }

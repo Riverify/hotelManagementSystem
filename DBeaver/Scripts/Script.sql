@@ -52,7 +52,7 @@ select ro.business,
        case
            when enterdate > CURRENT_DATE() and (ro.outdate - ro.enterdate + 1 > 0) then "预定"
            when enterdate <= CURRENT_DATE() and outdate >= CURRENT_DATE() and ri.booked = true then "在住"
-           when outdate < CURRENT_DATE() and ri.booked = false then "结束"
+           when outdate <= CURRENT_DATE() and ri.booked = false then "结束"
            else "无人"
            end                       as status
         ,

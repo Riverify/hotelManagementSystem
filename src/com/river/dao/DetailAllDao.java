@@ -1,5 +1,6 @@
 package com.river.dao;
 
+import com.river.entity.Customer;
 import com.river.entity.DetailAll;
 
 import java.util.List;
@@ -23,4 +24,6 @@ public interface DetailAllDao {
      * @return 细节信息对象
      */
     List<DetailAll> findAllStillIn();
+
+    List<DetailAll> findByIdnum(Customer customer);
 }

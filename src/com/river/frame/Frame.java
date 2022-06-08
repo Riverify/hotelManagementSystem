@@ -89,8 +89,6 @@ public class Frame {
             String phone = jTextField.getText();
             String psw = String.valueOf(jPasswordField.getPassword());
 
-
-
             // 封装信息
             Customer customer = new Customer();
             customer.setPhone(phone);
@@ -113,7 +111,9 @@ public class Frame {
                 // TODO: 6/6/22 主界面
                 if (list.get(0).getId() == 1) {
                     // TODO: 6/7/22 管理界面 对于负数居住，进行惩罚
-                    adminFrame();
+                    adminFrame(phone);
+                } else {
+                    adminFrame(phone);
                 }
                 mainFrame();
             } else {
@@ -138,15 +138,79 @@ public class Frame {
     // ================================================================================================================
     // ================================================================================================================
 
-
     /**
-     * 管理房间界面
+     * 管理员主界面
      */
-    private static void adminFrame() {
+    private static void adminFrame(String phone) {
         /*
         窗口绘制
          */
-        JFrame jFrame = SwingUtil.createNormalFrame("房间管理界面");
+        JFrame jFrame = SwingUtil.createNormalFrame("管理员界面", 1.5);
+        // 主界面布局
+        jFrame.setLayout(new GridLayout(1, 2, 1, 1));
+
+        JPanel jPanel_text = new JPanel();
+        JPanel jPanel_button = new JPanel();
+
+        // jPanel_text部分
+        JTextArea textArea_Info = SwingUtil.createNormalTextArea(20, 21, 30);
+        textArea_Info.setEditable(false);   // 禁止用户编辑
+        JScrollPane scrollPane = new JScrollPane(textArea_Info);
+
+        // 添加数据
+        Customer customer1 = new Customer(); // 使用customer储存信息
+        customer1.setPhone(phone);
+        // 使用dao与数据库沟通
+        CustomerDao customerDao = new CustomerDaoImpl();
+        List<Customer> customerList = customerDao.findOne(customer1);
+
+        // 添加个人基本数据到文本域
+        textArea_Info.append("欢迎使用客房管理系统\n\n\n");
+        textArea_Info.append(customerList.get(0).showInfo());
+
+        jPanel_text.add(scrollPane);
+
+        // jPanel_button
+        jPanel_button.setLayout(new GridLayout(2, 1, 10, 10));
+        JButton button_room = SwingUtil.createNormalButton("房间变更管理");
+        JButton button_userInfo = SwingUtil.createNormalButton("用户信息管理");
+
+
+        jPanel_button.add(button_room);
+        jPanel_button.add(button_userInfo);
+
+        jFrame.add(jPanel_text);
+        jFrame.add(jPanel_button);
+
+        jFrame.setVisible(true);
+        jFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+
+        /*
+        监听
+         */
+        button_room.addActionListener(e -> adminRoomManageFrame());
+
+        button_userInfo.addActionListener(e -> adminCustomerManageFrame());
+
+    }
+
+
+    // ================================================================================================================
+    // ================================================================================================================
+    // ================================================================================================================
+    // ================================================================================================================
+    // ================================================================================================================
+    // ================================================================================================================
+
+
+    /**
+     * 用户信息管理界面
+     */
+    private static void adminCustomerManageFrame() {
+        /*
+        窗口绘制
+         */
+        JFrame jFrame = SwingUtil.createNormalFrame("用户信息管理界面");
         jFrame.setLayout(new GridLayout(2, 1, 10, 10));
 
         JPanel jPanel_topScreen = new JPanel();
@@ -159,7 +223,143 @@ public class Frame {
         textArea_Info.setEditable(false);   // 禁止用户编辑
         JScrollPane scrollPane = new JScrollPane(textArea_Info);
 
-        // temp text
+        DetailAllDao dao = new DetailAllDaoImpl();
+        List<DetailAll> list = dao.findAll();
+
+        for (DetailAll detailAll : list) {
+            textArea_Info.append(detailAll.toString());
+            textArea_Info.append("——————————————————————————————————————————————————————————————\n");
+        }
+
+        jPanel_topScreen.add(scrollPane);
+
+
+        // 显示菜单栏按钮
+
+        jPanel_menu.setBorder(new EmptyBorder(10, 10, 10, 400));
+
+        JButton button_refresh = SwingUtil.createNormalButton("刷新全部", 10, 30);
+        JButton button_current = SwingUtil.createNormalButton("进行中信息", 10, 30);
+        JButton button_10rows = SwingUtil.createNormalButton("最近10条", 10, 30);
+
+        jPanel_menu.add(button_refresh);
+        jPanel_menu.add(button_current);
+        jPanel_menu.add(button_10rows);
+
+
+        // jPanel_Bottom
+        // label
+        JLabel label_business = SwingUtil.createNormalLabel("正在进行中的订单流水号", 30);
+        JLabel label_change = SwingUtil.createNormalLabel("更换为", 30);
+
+
+        // 订单房间管理panel
+        JPanel jPanel_roomChange = new JPanel(new FlowLayout());
+
+
+        // 显示订单下拉框
+        // 创建订单流水对象，专门储存订单号
+        DetailAllDao detailAllDao = new DetailAllDaoImpl();
+        List<DetailAll> list_business = detailAllDao.findAllStillIn();
+
+        JComboBox<Integer> box_business = new JComboBox<>();
+        box_business.setFont(new Font("Arial", Font.PLAIN, 30));
+        box_business.setBorder(new EmptyBorder(4, 10, 4, 10)); // 设置边距
+
+        // 将查询得到的list_business中的每一个对象的business获取并给予下拉框
+        for (DetailAll listBusiness : list_business) {
+            box_business.addItem(listBusiness.getBusiness());
+        }
+
+        // 展示当前订单的房间号
+        JTextField textField_nowRoom = SwingUtil.createNormalTextField("", 30, 3);
+        //textField_nowRoom.addFocusListener(new JTextFieldHintListener(textField_nowRoom, "无可选")); // 提示字符
+
+        // 将当前单号对应房间号给予文本框
+        RoomOperation nowRoom1 = new RoomOperation();
+        if (box_business.getSelectedItem() != null) {
+            nowRoom1.setBusiness((Integer) box_business.getSelectedItem());
+            RoomOperationDao roomOperationDao1 = new RoomOperationImpl();
+            textField_nowRoom.setText(String.valueOf(roomOperationDao1.selcetRoomnoByBusiness(nowRoom1).get(0).getRoomno()));
+        }
+
+
+        textField_nowRoom.setEditable(false);   // 禁止用户编辑
+
+
+        // 显示可用房间下拉框
+        // 创建房间信息对象，专门可用房间号
+        RoomInfoDao roomInfoDao = new RoomInfoDaoImpl();
+        List<RoomInfo> empytRoomList = roomInfoDao.selectEmptyRoom();
+
+
+        // 设置box的基本信息
+        JComboBox<Integer> box_room = new JComboBox<>();
+        box_room.setFont(new Font("Arial", Font.PLAIN, 30));
+        box_room.setBorder(new EmptyBorder(4, 10, 4, 10)); // 设置边距
+
+        // 将查询得到的list_business中的每一个对象的business获取并给予下拉框
+        for (RoomInfo empytRoom : empytRoomList) {
+            box_room.addItem(empytRoom.getRoomno());
+        }
+
+
+        // 更换按钮
+        JButton button_changeRoom = SwingUtil.createNormalButton("更换", 30, 15);
+
+        // 删除按钮
+        JButton button_delete = SwingUtil.createNormalButton("退房", 30, 15);
+
+
+        jPanel_roomChange.add(label_business);
+        jPanel_roomChange.add(box_business);
+        jPanel_roomChange.add(textField_nowRoom);
+        jPanel_roomChange.add(label_change);
+        jPanel_roomChange.add(box_room);
+        jPanel_roomChange.add(button_changeRoom);
+        jPanel_roomChange.add(button_delete);
+
+        // 将menu和更换房间放入bottomScreen
+        jPanel_bottomScreen.add(jPanel_menu);
+        jPanel_bottomScreen.add(jPanel_roomChange);
+
+
+        jFrame.add(jPanel_topScreen);
+        jFrame.add(jPanel_bottomScreen);
+
+
+        jFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        jFrame.setVisible(true);
+    }
+
+    // ================================================================================================================
+    // ================================================================================================================
+    // ================================================================================================================
+    // ================================================================================================================
+    // ================================================================================================================
+    // ================================================================================================================
+
+
+    /**
+     * 管理房间界面
+     */
+    private static void adminRoomManageFrame() {
+        /*
+        窗口绘制
+         */
+        JFrame jFrame = SwingUtil.createNormalFrame("房间变更管理界面");
+        jFrame.setLayout(new GridLayout(2, 1, 10, 10));
+
+        JPanel jPanel_topScreen = new JPanel();
+        JPanel jPanel_menu = new JPanel();
+        JPanel jPanel_bottomScreen = new JPanel();
+
+
+        // 显示顶部文本域
+        JTextArea textArea_Info = SwingUtil.createNormalTextArea(15, 65, 30);
+        textArea_Info.setEditable(false);   // 禁止用户编辑
+        JScrollPane scrollPane = new JScrollPane(textArea_Info);
+
         DetailAllDao dao = new DetailAllDaoImpl();
         List<DetailAll> list = dao.findAll();
 
