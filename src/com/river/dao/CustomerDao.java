@@ -44,6 +44,8 @@ public interface CustomerDao {
      */
     List<Customer> findOne(Customer customer);
 
+    List<Customer> getAdminPassword();
+
     /**
      * 根据手机号获得身份证信息
      */
@@ -58,4 +60,6 @@ public interface CustomerDao {
     int passVip(String phone);
 
     int passVipAll();
+
+    int changePassword(String phone, String newPassword);
 }

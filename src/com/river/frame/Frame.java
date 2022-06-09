@@ -32,7 +32,7 @@ public class Frame {
         jFrame.setLayout(new GridLayout(3, 3));
 
         JPanel jPanel1 = new JPanel();
-        jPanel1.setBorder(new EmptyBorder(20, 80, 10, 20));
+        jPanel1.setBorder(new EmptyBorder(20, 110, 10, 0));
 
         JPanel jPanel2 = new JPanel(new FlowLayout());
         jPanel2.setBorder(new EmptyBorder(10, 100, 10, 100));
@@ -51,11 +51,13 @@ public class Frame {
         JButton button_login = SwingUtil.createNormalButton("登陆", 35, 30);
         JButton button_exit = SwingUtil.createNormalButton("退出", 35, 30);
         JButton button_register = SwingUtil.createNormalButton("注册", 30, 15);
+        JButton button_findPassword = SwingUtil.createNormalButton("找密", 30, 15);
 
         jLabel_title.setHorizontalAlignment(SwingConstants.CENTER);
 
         jPanel1.add(jLabel_title);
         jPanel1.add(button_register);
+        jPanel1.add(button_findPassword);
         jPanel2.add(jLabel_id);
         jPanel2.add(jTextField);
         jPanel2.add(jLabel_psw);
@@ -81,6 +83,10 @@ public class Frame {
 
         // 进入注册页面
         button_register.addActionListener(e -> registerFrame());
+
+        // 进入找回密码页面
+        button_findPassword.addActionListener(e -> findPasswordFrame());
+
 
         // 登陆按钮监听
         button_login.addActionListener(e -> {
@@ -125,11 +131,12 @@ public class Frame {
                 } else {
                     // 错误时清除密码框
                     jPasswordField.setText("");
-                    SwingUtil.showMessage(jFrame, "手机号或密码错误!");
+                    SwingUtil.showMessage(jFrame, "手机号或密码错误!\nTip:如果忘记，请联系管理员获得改密密钥");
                 }
             }
         });
     }
+
 
     // ================================================================================================================
     // ================================================================================================================
@@ -798,6 +805,92 @@ public class Frame {
                     SwingUtil.showMessage(jFrame, "输入不正确，注册失败！");
                 }
             }
+        });
+    }
+
+    // ================================================================================================================
+    // ================================================================================================================
+    // ================================================================================================================
+    // ================================================================================================================
+    // ================================================================================================================
+    // ================================================================================================================
+
+    /**
+     * 找回密码页面
+     */
+    private static void findPasswordFrame() {
+        /*
+        窗口绘制
+         */
+        JFrame jFrame = SwingUtil.createNormalFrame("找回密码", 2);
+        jFrame.setLayout(new GridLayout(2, 1));
+
+        JPanel jPanel1 = new JPanel(new FlowLayout());
+        jPanel1.setBorder(new EmptyBorder(20, 170, 1, 170));
+
+        JPanel jPanel2 = new JPanel(new FlowLayout());
+        jPanel2.setBorder(new EmptyBorder(100, 100, 1, 100));
+
+        JLabel jLabel_phone = SwingUtil.createNormalLabel("手机号    ", 40);
+        JLabel jLabel_key = SwingUtil.createNormalLabel(" 密钥      ", 40);
+        JLabel jLabel_newPassword = SwingUtil.createNormalLabel("新密码    ", 40);
+        JLabel jLabel_verifyPassword = SwingUtil.createNormalLabel("确认密码 ", 40);
+
+        JTextField jTextField_phone = SwingUtil.createNormalTextField("", 38, 10);
+        JTextField jTextField_key = SwingUtil.createNormalTextField("", 38, 10);
+        JPasswordField jPasswordField1 = SwingUtil.createNormalPasswordField("", 38, 10);
+        JPasswordField jPasswordField2 = SwingUtil.createNormalPasswordField("", 38, 10);
+
+        JButton button_register = SwingUtil.createNormalButton("确认", 10, 30);
+
+        // panel1
+        jPanel1.add(jLabel_phone);
+        jPanel1.add(jTextField_phone);
+        jPanel1.add(jLabel_key);
+        jPanel1.add(jTextField_key);
+        jPanel1.add(jLabel_newPassword);
+        jPanel1.add(jPasswordField1);
+        jPanel1.add(jLabel_verifyPassword);
+        jPanel1.add(jPasswordField2);
+
+        // panel2
+        jPanel2.add(button_register);
+
+        jFrame.add(jPanel1);
+        jFrame.add(jPanel2);
+
+        jFrame.setVisible(true);
+        jFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+
+        /*
+        监听事件
+         */
+        button_register.addActionListener(e -> {
+            CustomerDao customerDao = new CustomerDaoImpl();
+            List<Customer> list = customerDao.getAdminPassword();   // 获取key，key为admin的密码
+
+            // 获取数据
+            String phone = jTextField_phone.getText();
+            String keyDao = list.get(0).getPassword();
+            String key = jTextField_key.getText();
+            String password = String.valueOf(jPasswordField1.getPassword());
+            String verify = String.valueOf(jPasswordField2.getPassword());
+
+            // 直接对比密码和key是否正确
+            if (!password.equals(verify)) {
+                SwingUtil.showMessage(jFrame, "确认密码错误！");
+                jLabel_newPassword.setText("");
+                jLabel_verifyPassword.setText("");
+            } else if (!key.equals(keyDao)) {
+                SwingUtil.showMessage(jFrame, "密钥错误！");
+            } else {
+                int n = customerDao.changePassword(phone, password);
+                if (n == 1) {
+                    SwingUtil.showMessage(jFrame, "修改成功，请妥善保存");
+                    jFrame.dispose();
+                }
+            }
+
         });
     }
 }

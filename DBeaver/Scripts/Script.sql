@@ -127,8 +127,10 @@ values (null, '342223200201266631', 102, '2022-06-07', '2022-06-10');
 -- 
 -- 
 -- select business from roomOperation where outdate > CURRENT_DATE();
-select roomno
-from roomOperation
-where outdate < CURRENT_DATE();
+-- select roomno
+-- from roomOperation
+-- where outdate < CURRENT_DATE();
+-- 
+-- update customer set vip = true where phone = '110';
 
 

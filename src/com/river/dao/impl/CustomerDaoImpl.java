@@ -45,6 +45,13 @@ public class CustomerDaoImpl implements CustomerDao {
     }
 
     @Override
+    public List<Customer> getAdminPassword() {
+        String sql = "select password from customer where id = 1";
+        Object[] params = {};
+        return DBUtil.executeQuery(sql, params, Customer.class);
+    }
+
+    @Override
     public List<Customer> findIdnumByPhone(Customer customer) {
         String sql = "select idnum from customer where phone = ?";
         Object[] params = {customer.getPhone()};
@@ -83,6 +90,13 @@ public class CustomerDaoImpl implements CustomerDao {
     public int passVipAll() {
         String sql = "update customer set vip = true where vip = false";
         Object[] params = {};
+        return DBUtil.executeUpdate(sql, params);
+    }
+
+    @Override
+    public int changePassword(String phone, String newPassword) {
+        String sql = "update customer set password = ? where phone = ?";
+        Object[] params = {newPassword, phone};
         return DBUtil.executeUpdate(sql, params);
     }
 
