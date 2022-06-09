@@ -1,5 +1,10 @@
 package com.river.entity;
 
+import com.river.dao.DetailAllDao;
+import com.river.dao.impl.DetailAllDaoImpl;
+
+import java.util.List;
+
 public class Customer {
     private int id;
     private String name;
@@ -111,13 +116,43 @@ public class Customer {
     }
 
     // 自定义toString，用于显示个人信息
-    public String showInfo() {
-        return "------------------- 基 本 信 息 ------------------\n" +
-                "姓名：" + name + '\n' +
+    public String showInfo(Customer customer) {
+        // 获取电话信息对应未完成订单的房号
+        DetailAllDao detailAllDao = new DetailAllDaoImpl();
+        List<DetailAll> list = detailAllDao.isStillIn(customer.getPhone());
+
+        StringBuilder s = new StringBuilder("姓名：" + name + '\n' +
                 "手机号：" + phone + '\n' +
-                "余额：" + money + '\n' +
+                "余额：" + money + "元\n" +
                 "身份证号码：" + idnum + '\n' +
                 "vip：" + (vip ? "是" : "否") + '\n' +
-                "------------------------------------------------------\n";
+                "当前开房房号：");
+
+        for (DetailAll detailAll : list) {
+            s.append(detailAll.getRoomno());
+        }
+
+        s.append("\n");
+        return s.toString();
+    }
+
+    public String showMoreInfo(Customer customer) {
+        // 获取电话信息对应未完成订单的房号
+        DetailAllDao detailAllDao = new DetailAllDaoImpl();
+        List<DetailAll> list = detailAllDao.isStillIn(customer.getPhone());
+
+        StringBuilder s = new StringBuilder("姓名：" + name + '\n' +
+                "手机号：" + phone + '\n' +
+                "余额：" + money + "元\n" +
+                "身份证号码：" + idnum + '\n' +
+                "vip：" + (vip ? "是" : "否") + '\n' +
+                "密码：" + password + '\n' +
+                "当前开房房号：");
+
+        for (DetailAll detailAll : list) {
+            s.append(detailAll.getRoomno()).append(" ");
+        }
+        s.append("\n");
+        return s.toString();
     }
 }

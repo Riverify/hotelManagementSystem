@@ -166,7 +166,9 @@ public class Frame {
 
         // 添加个人基本数据到文本域
         textArea_Info.append("欢迎使用客房管理系统\n\n\n");
-        textArea_Info.append(customerList.get(0).showInfo());
+        textArea_Info.append("------------------- 基 本 信 息 ------------------\n");
+        textArea_Info.append(customerList.get(0).showInfo(customer1));
+        textArea_Info.append("------------------------------------------------------\n");
 
         jPanel_text.add(scrollPane);
 
@@ -223,11 +225,11 @@ public class Frame {
         textArea_Info.setEditable(false);   // 禁止用户编辑
         JScrollPane scrollPane = new JScrollPane(textArea_Info);
 
-        DetailAllDao dao = new DetailAllDaoImpl();
-        List<DetailAll> list = dao.findAll();
+        CustomerDao customerDao = new CustomerDaoImpl();
+        List<Customer> list = customerDao.findAll();
 
-        for (DetailAll detailAll : list) {
-            textArea_Info.append(detailAll.toString());
+        for (Customer c : list) {
+            textArea_Info.append(c.showMoreInfo(c));
             textArea_Info.append("——————————————————————————————————————————————————————————————\n");
         }
 
@@ -236,92 +238,69 @@ public class Frame {
 
         // 显示菜单栏按钮
 
-        jPanel_menu.setBorder(new EmptyBorder(10, 10, 10, 400));
+        jPanel_menu.setBorder(new EmptyBorder(10, 10, 10, 200));
 
-        JButton button_refresh = SwingUtil.createNormalButton("刷新全部", 10, 30);
-        JButton button_current = SwingUtil.createNormalButton("进行中信息", 10, 30);
-        JButton button_10rows = SwingUtil.createNormalButton("最近10条", 10, 30);
+        JButton button_refresh = SwingUtil.createNormalButton("刷新全部", 8, 30);
+        JButton button_vip = SwingUtil.createNormalButton("仅显示vip", 8, 30);
+        JButton button_notVip = SwingUtil.createNormalButton("仅显示非vip", 8, 30);
 
         jPanel_menu.add(button_refresh);
-        jPanel_menu.add(button_current);
-        jPanel_menu.add(button_10rows);
+        jPanel_menu.add(button_vip);
+        jPanel_menu.add(button_notVip);
 
 
         // jPanel_Bottom
         // label
-        JLabel label_business = SwingUtil.createNormalLabel("正在进行中的订单流水号", 30);
-        JLabel label_change = SwingUtil.createNormalLabel("更换为", 30);
+        JLabel label_judge = SwingUtil.createNormalLabel("审核非vip账号：", 30);
 
 
         // 订单房间管理panel
-        JPanel jPanel_roomChange = new JPanel(new FlowLayout());
+        JPanel jPanel_change = new JPanel(new FlowLayout());
 
 
-        // 显示订单下拉框
-        // 创建订单流水对象，专门储存订单号
-        DetailAllDao detailAllDao = new DetailAllDaoImpl();
-        List<DetailAll> list_business = detailAllDao.findAllStillIn();
+        // 显示非vip账号
+        List<Customer> notVipList = customerDao.findNotVip();
 
-        JComboBox<Integer> box_business = new JComboBox<>();
-        box_business.setFont(new Font("Arial", Font.PLAIN, 30));
-        box_business.setBorder(new EmptyBorder(4, 10, 4, 10)); // 设置边距
+        // 新建下拉框
+        JComboBox<String> box_judge = new JComboBox<>();
+        box_judge.setFont(new Font("Arial", Font.PLAIN, 30));
+        box_judge.setBorder(new EmptyBorder(4, 10, 4, 10)); // 设置边距
 
-        // 将查询得到的list_business中的每一个对象的business获取并给予下拉框
-        for (DetailAll listBusiness : list_business) {
-            box_business.addItem(listBusiness.getBusiness());
+        // 将查询得到的notVipList中的每一个对象的phone获取并给予下拉框
+        for (Customer customer : notVipList) {
+            box_judge.addItem(customer.getPhone());
         }
 
-        // 展示当前订单的房间号
-        JTextField textField_nowRoom = SwingUtil.createNormalTextField("", 30, 3);
+        // 展示当前手机号的号主
+        JTextField textField_name = SwingUtil.createNormalTextField("", 30, 3);
         //textField_nowRoom.addFocusListener(new JTextFieldHintListener(textField_nowRoom, "无可选")); // 提示字符
 
-        // 将当前单号对应房间号给予文本框
-        RoomOperation nowRoom1 = new RoomOperation();
-        if (box_business.getSelectedItem() != null) {
-            nowRoom1.setBusiness((Integer) box_business.getSelectedItem());
-            RoomOperationDao roomOperationDao1 = new RoomOperationImpl();
-            textField_nowRoom.setText(String.valueOf(roomOperationDao1.selcetRoomnoByBusiness(nowRoom1).get(0).getRoomno()));
+        // 将当前手机号给予Customer
+        Customer customer = new Customer();
+        if (box_judge.getSelectedItem() != null) {
+            customer.setPhone((String) box_judge.getSelectedItem());
+            textField_name.setText(String.valueOf(customerDao.findNameByPhone(customer).get(0).getName()));
         }
 
-
-        textField_nowRoom.setEditable(false);   // 禁止用户编辑
-
-
-        // 显示可用房间下拉框
-        // 创建房间信息对象，专门可用房间号
-        RoomInfoDao roomInfoDao = new RoomInfoDaoImpl();
-        List<RoomInfo> empytRoomList = roomInfoDao.selectEmptyRoom();
+        textField_name.setEditable(false);   // 禁止用户编辑
 
 
-        // 设置box的基本信息
-        JComboBox<Integer> box_room = new JComboBox<>();
-        box_room.setFont(new Font("Arial", Font.PLAIN, 30));
-        box_room.setBorder(new EmptyBorder(4, 10, 4, 10)); // 设置边距
+        // 通过按钮
+        JButton button_pass = SwingUtil.createNormalButton("通过", 20, 18);
 
-        // 将查询得到的list_business中的每一个对象的business获取并给予下拉框
-        for (RoomInfo empytRoom : empytRoomList) {
-            box_room.addItem(empytRoom.getRoomno());
-        }
+        // 全部通过按钮
+        JButton button_passAll = SwingUtil.createNormalButton("全部通过", 20, 15);
 
 
-        // 更换按钮
-        JButton button_changeRoom = SwingUtil.createNormalButton("更换", 30, 15);
-
-        // 删除按钮
-        JButton button_delete = SwingUtil.createNormalButton("退房", 30, 15);
-
-
-        jPanel_roomChange.add(label_business);
-        jPanel_roomChange.add(box_business);
-        jPanel_roomChange.add(textField_nowRoom);
-        jPanel_roomChange.add(label_change);
-        jPanel_roomChange.add(box_room);
-        jPanel_roomChange.add(button_changeRoom);
-        jPanel_roomChange.add(button_delete);
+        jPanel_change.add(label_judge);
+        jPanel_change.add(box_judge);
+        jPanel_change.add(textField_name);
+        jPanel_change.add(button_pass);
+        jPanel_change.add(button_passAll);
 
         // 将menu和更换房间放入bottomScreen
         jPanel_bottomScreen.add(jPanel_menu);
-        jPanel_bottomScreen.add(jPanel_roomChange);
+        jPanel_bottomScreen.add(jPanel_change);
 
 
         jFrame.add(jPanel_topScreen);
@@ -330,6 +309,69 @@ public class Frame {
 
         jFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         jFrame.setVisible(true);
+
+        /*
+        监听
+         */
+        // 刷新所有用户信息
+        button_refresh.addActionListener(e -> {
+            // 清空文本域
+            textArea_Info.setText("");
+            List<Customer> l = customerDao.findAll();
+            int count = 0;  // 计数器
+            for (Customer c : l) {
+                count++;
+                textArea_Info.append(c.showMoreInfo(c));
+                textArea_Info.append("——————————————————————————————————————————————————————————————\n");
+            }
+            textArea_Info.append("\n刷新完毕:总共" + count + "个账户！\n");
+        });
+
+        // 查看vip用户
+        button_vip.addActionListener(e -> {
+            // 清空文本域
+            textArea_Info.setText("");
+            List<Customer> l = customerDao.findVip();
+            int count = 0;  // 计数器
+            for (Customer c : l) {
+                count++;
+                textArea_Info.append(c.showMoreInfo(c));
+                textArea_Info.append("——————————————————————————————————————————————————————————————\n");
+            }
+            textArea_Info.append("\n刷新完毕:总共" + count + "个vip账户！\n");
+        });
+
+        // 查看非vip用户
+        button_notVip.addActionListener(e -> {
+            // 清空文本域
+            textArea_Info.setText("");
+            List<Customer> l = customerDao.findNotVip();
+            int count = 0;  // 计数器
+            for (Customer c : l) {
+                count++;
+                textArea_Info.append(c.showMoreInfo(c));
+                textArea_Info.append("——————————————————————————————————————————————————————————————\n");
+            }
+            textArea_Info.append("\n刷新完毕:总共" + count + "个非vip账户！\n");
+        });
+
+        button_pass.addActionListener(e -> {
+            // 获取手机号
+            String phone = (String) box_judge.getSelectedItem();
+            int n = customerDao.passVip(phone);
+            if (n == 1) {
+                SwingUtil.showMessage(jFrame, "成功");
+            } else {
+                SwingUtil.showMessage(jFrame, "失败");
+            }
+        });
+
+        // 全部通过
+        button_passAll.addActionListener(e -> {
+            int n = customerDao.passVipAll();
+            SwingUtil.showMessage(jFrame, "共通过了" + n + "个账户");
+        });
+
     }
 
     // ================================================================================================================

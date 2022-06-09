@@ -32,7 +32,9 @@ public class CustomerDaoImpl implements CustomerDao {
 
     @Override
     public List<Customer> findAll() {
-        return null;
+        String sql = "select * from customer";
+        Object[] params = {};
+        return DBUtil.executeQuery(sql, params, Customer.class);
     }
 
     @Override
@@ -48,5 +50,41 @@ public class CustomerDaoImpl implements CustomerDao {
         Object[] params = {customer.getPhone()};
         return DBUtil.executeQuery(sql, params, Customer.class);
     }
+
+    @Override
+    public List<Customer> findNameByPhone(Customer customer) {
+        String sql = "select name from customer where phone = ?";
+        Object[] params = {customer.getPhone()};
+        return DBUtil.executeQuery(sql, params, Customer.class);
+    }
+
+    @Override
+    public List<Customer> findNotVip() {
+        String sql = "select * from customer where vip = false";
+        Object[] params = {};
+        return DBUtil.executeQuery(sql, params, Customer.class);
+    }
+
+    @Override
+    public List<Customer> findVip() {
+        String sql = "select * from customer where vip = true";
+        Object[] params = {};
+        return DBUtil.executeQuery(sql, params, Customer.class);
+    }
+
+    @Override
+    public int passVip(String phone) {
+        String sql = "update customer set vip = true where phone = ?";
+        Object[] params = {phone};
+        return DBUtil.executeUpdate(sql, params);
+    }
+
+    @Override
+    public int passVipAll() {
+        String sql = "update customer set vip = true where vip = false";
+        Object[] params = {};
+        return DBUtil.executeUpdate(sql, params);
+    }
+
 
 }

@@ -25,5 +25,12 @@ public interface DetailAllDao {
      */
     List<DetailAll> findAllStillIn();
 
+    /**
+     * 根据现有订单
+     *
+     * @param idnum
+     */
+    List<DetailAll> isStillIn(String phone);
+
     List<DetailAll> findByIdnum(Customer customer);
 }

@@ -48,4 +48,14 @@ public interface CustomerDao {
      * 根据手机号获得身份证信息
      */
     List<Customer> findIdnumByPhone(Customer customer);
+
+    List<Customer> findNameByPhone(Customer customer);
+
+    List<Customer> findNotVip();
+
+    List<Customer> findVip();
+
+    int passVip(String phone);
+
+    int passVipAll();
 }
