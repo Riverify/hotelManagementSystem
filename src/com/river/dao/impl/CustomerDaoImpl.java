@@ -24,6 +24,13 @@ public class CustomerDaoImpl implements CustomerDao {
     }
 
     @Override
+    public List<Customer> checkLogin2(Customer customer) {
+        String sql = "select * from customer where phone = ? and password = ? and vip = true";
+        Object[] params = {customer.getPhone(), customer.getPassword()};
+        return DBUtil.executeQuery(sql, params, Customer.class);
+    }
+
+    @Override
     public List<Customer> checkRegister(Customer customer) {
         String sql = "select * from customer where phone = ?";
         Object[] params = {customer.getPhone()};
@@ -43,6 +50,7 @@ public class CustomerDaoImpl implements CustomerDao {
         Object[] params = {customer.getPhone()};
         return DBUtil.executeQuery(sql, params, Customer.class);
     }
+
 
     @Override
     public List<Customer> getAdminPassword() {
@@ -100,5 +108,11 @@ public class CustomerDaoImpl implements CustomerDao {
         return DBUtil.executeUpdate(sql, params);
     }
 
+    @Override
+    public int changeMoney(String phone, long money) {
+        String sql = "update customer set money = money + ? where phone = ?";
+        Object[] params = {money, phone};
+        return DBUtil.executeUpdate(sql, params);
+    }
 
 }

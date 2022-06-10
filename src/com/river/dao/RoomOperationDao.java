@@ -30,5 +30,5 @@ public interface RoomOperationDao {
      */
     List<RoomOperation> autoExit();
 
-    int outRoom(int roomno);
+    int outRoom(int roomno, int business);
 }

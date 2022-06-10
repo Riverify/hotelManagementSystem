@@ -17,9 +17,30 @@ public class DetailAllDaoImpl implements DetailAllDao {
     }
 
     @Override
+    public List<DetailAll> findOne(String phone) {
+        String sql = "select * from detailAll where phone = ?";
+        Object[] params = {phone};
+        return DBUtil.executeQuery(sql, params, DetailAll.class);
+    }
+
+    @Override
+    public List<DetailAll> findOneByBusiness(String business) {
+        String sql = "select * from detailAll where business = ?";
+        Object[] params = {business};
+        return DBUtil.executeQuery(sql, params, DetailAll.class);
+    }
+
+    @Override
     public List<DetailAll> findAllStillIn() {
         String sql = "select * from detailAll where status = '预定' or status = '在住'";
         Object[] params = {};
+        return DBUtil.executeQuery(sql, params, DetailAll.class);
+    }
+
+    @Override
+    public List<DetailAll> findAllStillIn(String phone) {
+        String sql = "select * from detailAll where status = '预定' or status = '在住' and phone = ?";
+        Object[] params = {phone};
         return DBUtil.executeQuery(sql, params, DetailAll.class);
     }
 

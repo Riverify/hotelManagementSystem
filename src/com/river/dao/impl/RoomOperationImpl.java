@@ -43,9 +43,9 @@ public class RoomOperationImpl implements RoomOperationDao {
     }
 
     @Override
-    public int outRoom(int roomno) {
-        String sql = "update roomOperation set outdate = CURRENT_DATE() where roomno = ?";
-        Object[] params = {roomno};
+    public int outRoom(int roomno, int business) {
+        String sql = "update roomOperation set outdate = CURRENT_DATE() where roomno = ? and business = ?";
+        Object[] params = {roomno, business};
         return DBUtil.executeUpdate(sql, params);
     }
 }

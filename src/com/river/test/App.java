@@ -8,5 +8,4 @@ public class App extends Frame {
         loginFrame();
     }
 
-
 }

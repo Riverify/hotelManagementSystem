@@ -18,6 +18,10 @@ public interface DetailAllDao {
      */
     List<DetailAll> findAll();
 
+    List<DetailAll> findOne(String phone);
+
+    List<DetailAll> findOneByBusiness(String business);
+
     /**
      * 查询所有在住或者预约中的流水信息
      *
@@ -26,9 +30,14 @@ public interface DetailAllDao {
     List<DetailAll> findAllStillIn();
 
     /**
-     * 根据现有订单
+     * 查询某个账号在住或者预约中的流水信息
      *
-     * @param idnum
+     * @return 细节信息对象
+     */
+    List<DetailAll> findAllStillIn(String phone);
+
+    /**
+     * 根据现有订单
      */
     List<DetailAll> isStillIn(String phone);
 

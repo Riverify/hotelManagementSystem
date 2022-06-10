@@ -21,6 +21,8 @@ public interface CustomerDao {
      */
     List<Customer> checkLogin(Customer customer);
 
+    List<Customer> checkLogin2(Customer customer);
+
     /**
      * 注册检查
      *
@@ -62,4 +64,6 @@ public interface CustomerDao {
     int passVipAll();
 
     int changePassword(String phone, String newPassword);
+
+    int changeMoney(String phone, long money);
 }
