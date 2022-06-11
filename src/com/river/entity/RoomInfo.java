@@ -68,4 +68,11 @@ public class RoomInfo {
                 ", booked=" + booked +
                 '}';
     }
+
+    public String showInfo() {
+        return "房号：" + roomno +
+                "　 房间类型:'" + roomtype + '\'' +
+                "　 " + bednum + "人间" +
+                "   价格：" + price + "元/天\n";
+    }
 }

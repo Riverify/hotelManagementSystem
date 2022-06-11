@@ -9,7 +9,7 @@ import java.util.List;
 public class RoomInfoDaoImpl implements RoomInfoDao {
     @Override
     public List<RoomInfo> selectEmptyRoom() {
-        String sql = "select roomno from roomInfo where booked = false";
+        String sql = "select * from roomInfo where booked = false";
         Object[] params = {};
         return DBUtil.executeQuery(sql, params, RoomInfo.class);
     }
