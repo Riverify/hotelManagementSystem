@@ -129,7 +129,7 @@ public class Customer {
                 "当前开房房号：");
 
         for (DetailAll detailAll : list) {
-            s.append(detailAll.getRoomno());
+            s.append(detailAll.getRoomno()).append(" ");
         }
 
         s.append("\n");

@@ -18,6 +18,7 @@ import com.river.util.SwingUtil;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.sql.Date;
 import java.util.List;
 
 
@@ -491,7 +492,7 @@ public class Frame {
         // 显示可用房间下拉框
         // 创建房间信息对象，专门可用房间号
         RoomInfoDao roomInfoDao = new RoomInfoDaoImpl();
-        List<RoomInfo> empytRoomList = roomInfoDao.selectEmptyRoom();
+        List<RoomInfo> emptyRoomList = roomInfoDao.selectEmptyRoom();
 
 
         // 设置box的基本信息
@@ -500,8 +501,8 @@ public class Frame {
         box_room.setBorder(new EmptyBorder(4, 10, 4, 10)); // 设置边距
 
         // 将查询得到的list_business中的每一个对象的business获取并给予下拉框
-        for (RoomInfo empytRoom : empytRoomList) {
-            box_room.addItem(empytRoom.getRoomno());
+        for (RoomInfo emptyRoom : emptyRoomList) {
+            box_room.addItem(emptyRoom.getRoomno());
         }
 
 
@@ -700,13 +701,17 @@ public class Frame {
         jPanel_text.add(scrollPane);
 
         // jPanel_button
-        jPanel_button.setLayout(new GridLayout(3, 1, 10, 10));
+        jPanel_button.setLayout(new GridLayout(3, 2, 10, 10));
+        JButton button_refresh = SwingUtil.createNormalButton("刷新");
+        JButton button_book = SwingUtil.createNormalButton("订房");
         JButton button_room = SwingUtil.createNormalButton("房间变更");
         JButton button_userInfo = SwingUtil.createNormalButton("信息修改");
         JButton button_charge = SwingUtil.createNormalButton("余额充值");
         JButton button_help = SwingUtil.createNormalButton("帮助");
 
 
+        jPanel_button.add(button_refresh);
+        jPanel_button.add(button_book);
         jPanel_button.add(button_room);
         jPanel_button.add(button_userInfo);
         jPanel_button.add(button_charge);
@@ -721,6 +726,20 @@ public class Frame {
         /*
         监听
          */
+
+        // 刷新
+        button_refresh.addActionListener(e -> {
+            List<Customer> list = customerDao.findOne(customer1);
+            textArea_Info.setText("");
+            // 添加个人基本数据到文本域
+            textArea_Info.append("欢迎使用客房管理系统\n\n\n");
+            textArea_Info.append("------------------- 基 本 信 息 ------------------\n");
+            textArea_Info.append(list.get(0).showInfo(customer1));
+            textArea_Info.append("------------------------------------------------------\n");
+        });
+
+        button_book.addActionListener(e -> bookFrame(phone));
+
         button_room.addActionListener(e -> roomManageFrame(phone));
 
         button_userInfo.addActionListener(e -> customerInfoManageFrame(phone));
@@ -735,6 +754,7 @@ public class Frame {
         );
     }
 
+
     // ================================================================================================================
     // ================================================================================================================
     // ================================================================================================================
@@ -742,19 +762,72 @@ public class Frame {
     // ================================================================================================================
     // ================================================================================================================
 
-    private static void helpFrame() {
-        JFrame jFrame = new JFrame();
-        String text = "本酒店客房采用会员制，只有会员能登陆进入。对于预约和订房，仅作参考使用，您需要有能匹配订房房间天数对应的余额" +
-                "才可以订房。一旦房间被你所定，其他人无法订下你所定的房间，即使其他人的预约进入时间晚于你的退房时间。退房时间并非一定" +
-                "是您的退房时间，您可以选择不退，但在结算时，会额外根据天数扣除您的余额。您可以在预约时间之前就退订房间，但是为了弥补" +
-                "您预约之后其他人无法预约的损失，您会被扣除少量违约占用费。/n +" +
-                "订房前，我们会评估您目前余额是否足够，然后在您退房前，我们不会减少您的余额，这一切会在您退房时计算。";
+    private static void bookFrame(String phone) {
+        JFrame jFrame = SwingUtil.createNormalFrame("订房", 3);
 
-        JTextArea tips = SwingUtil.createNormalTextArea(30, 18, 15);
+        jFrame.setLayout(new GridLayout(6, 1));
 
-        jFrame.add(tips);
-        jFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        // 显示可用房间下拉框
+        // 创建房间信息对象，专门可用房间号
+        RoomInfoDao roomInfoDao = new RoomInfoDaoImpl();
+        List<RoomInfo> emptyRoomList = roomInfoDao.selectEmptyRoom();
+
+
+        // 设置box的基本信息
+        JComboBox<Integer> box_room = new JComboBox<>();
+        box_room.setFont(new Font("Arial", Font.PLAIN, 30));
+        box_room.setBorder(new EmptyBorder(4, 10, 4, 10)); // 设置边距
+
+        // 将查询得到的list_business中的每一个对象的business获取并给予下拉框
+        for (RoomInfo emptyRoom : emptyRoomList) {
+            box_room.addItem(emptyRoom.getRoomno());
+        }
+
+        // 按钮和标签
+        JLabel label_start = SwingUtil.createNormalLabel("开始时间", 35);
+        JLabel label_end = SwingUtil.createNormalLabel("结束时间", 35);
+        JTextField textField_start = SwingUtil.createNormalTextField("", 30, 30);
+        textField_start.addFocusListener(new JTextFieldHintListener(textField_start, "xxxx-xx-xx"));
+        JTextField textField_end = SwingUtil.createNormalTextField("", 30, 30);
+        textField_end.addFocusListener(new JTextFieldHintListener(textField_start, "xxxx-xx-xx"));
+        JButton button = SwingUtil.createNormalButton("确认", 30, 30);
+
+        jFrame.add(box_room);
+        jFrame.add(label_start);
+        jFrame.add(textField_start);
+        jFrame.add(label_end);
+        jFrame.add(textField_end);
+        jFrame.add(button);
+
         jFrame.setVisible(true);
+        jFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+
+        // 监听button
+        button.addActionListener(e -> {
+            if (box_room.getSelectedItem() == null || textField_end.getText().equals("") || textField_start.equals("")) {
+                SwingUtil.showMessage(jFrame, "请填写完整");
+            }
+            // 通过customer类用phone获得idnum
+            RoomOperation roomOperation = new RoomOperation();
+            CustomerDao customerDao = new CustomerDaoImpl();
+            Customer customer = new Customer();
+            customer.setPhone(phone);
+            roomOperation.setIdnum(customerDao.findOne(customer).get(0).getIdnum());
+            roomOperation.setRoomno((Integer) box_room.getSelectedItem());
+            roomOperation.setEnterdate(Date.valueOf(textField_start.getText()));
+            roomOperation.setOutdate(Date.valueOf(textField_end.getText()));
+            RoomOperationDao roomOperationDao = new RoomOperationImpl();
+            int n = roomOperationDao.addNewOperation(roomOperation);
+            if (n == 1) {
+                SwingUtil.showMessage(jFrame, "订房成功！");
+                roomInfoDao.makeRoomOccupy((Integer) box_room.getSelectedItem());
+                // 改变余额
+                RoomUtil.changeMoney(String.valueOf(roomOperationDao.getBusiness().get(0).getBusiness()));
+                jFrame.dispose();
+            } else {
+                System.err.println("n = " + n);
+            }
+        });
     }
 
     // ================================================================================================================
@@ -1180,7 +1253,7 @@ public class Frame {
                 if (n1 == 1 && n2 == 1) {
                     SwingUtil.showMessage(jFrame, "退房成功!");
                     int money = RoomUtil.changeMoney(box_business.getSelectedItem().toString());
-                    SwingUtil.showMessage(jFrame, "该账户余额" + money + "元");
+                    SwingUtil.showMessage(jFrame, "该账户余额增加" + money + "元");
                     jFrame.dispose();
                 } else {
                     SwingUtil.showMessage(jFrame, "出现问题");
@@ -1396,11 +1469,14 @@ public class Frame {
             SwingUtil.showMessage(jFrame, "如需换房，请先退房后再选房！");
         });
 
-        // 退房按钮
+        // 退房按钮　逻辑：先把给的钱全部退回，再再次收取住过天数的钱
         button_delete.addActionListener(e -> {
+            int money = 0;
             if (textField_nowRoom.getText().equals("")) {
                 SwingUtil.showMessage(jFrame, "无选中");
             } else {
+                // 先把钱全部退还
+                money += RoomUtil.refundMoney(box_business.getSelectedItem().toString());
                 // 获取数据
                 int no = Integer.parseInt(textField_nowRoom.getText());
 
@@ -1412,8 +1488,8 @@ public class Frame {
                 // 校验
                 if (n1 == 1 && n2 == 1) {
                     SwingUtil.showMessage(jFrame, "退房成功!");
-                    int money = RoomUtil.changeMoney(box_business.getSelectedItem().toString());
-                    SwingUtil.showMessage(jFrame, "账户余额" + money + "元");
+                    money += RoomUtil.changeMoney(box_business.getSelectedItem().toString());
+                    SwingUtil.showMessage(jFrame, "账户余额增加" + money + "元");
                     jFrame.dispose();
                 } else {
                     SwingUtil.showMessage(jFrame, "出现问题");

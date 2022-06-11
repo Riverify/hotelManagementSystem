@@ -16,6 +16,13 @@ public interface RoomOperationDao {
     List<RoomOperation> selcetBusiness(RoomOperation r);
 
     /**
+     * get the latest business
+     *
+     * @return
+     */
+    List<RoomOperation> getBusiness();
+
+    /**
      * 通过订单流水获得房间号
      */
     List<RoomOperation> selcetRoomnoByBusiness(RoomOperation r);
@@ -31,4 +38,6 @@ public interface RoomOperationDao {
     List<RoomOperation> autoExit();
 
     int outRoom(int roomno, int business);
+
+    int addNewOperation(RoomOperation operation);
 }

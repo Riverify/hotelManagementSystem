@@ -22,6 +22,13 @@ public class RoomOperationImpl implements RoomOperationDao {
     }
 
     @Override
+    public List<RoomOperation> getBusiness() {
+        String sql = "select business from roomOperation order by business desc";
+        Object[] params = {};
+        return DBUtil.executeQuery(sql, params, RoomOperation.class);
+    }
+
+    @Override
     public List<RoomOperation> selcetRoomnoByBusiness(RoomOperation r) {
         String sql = "select roomno from roomOperation where business = ?";
         Object[] params = {r.getBusiness()};
@@ -46,6 +53,13 @@ public class RoomOperationImpl implements RoomOperationDao {
     public int outRoom(int roomno, int business) {
         String sql = "update roomOperation set outdate = CURRENT_DATE() where roomno = ? and business = ?";
         Object[] params = {roomno, business};
+        return DBUtil.executeUpdate(sql, params);
+    }
+
+    @Override
+    public int addNewOperation(RoomOperation operation) {
+        String sql = "insert into roomOperation values (null, ?, ?, ?, ?)"; // insert into roomOperation values (null, '342223200201266631', 102, '2022-06-07', '2022-06-10');
+        Object[] params = {operation.getIdnum(), operation.getRoomno(), operation.getEnterdate(), operation.getOutdate()};
         return DBUtil.executeUpdate(sql, params);
     }
 }
